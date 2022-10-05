@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">RentalVanOU</string>
+    <string name="btn_Volver">Volver</string>
+    <string name="btn_Volver2" type="id">VOLVER</string>
+    <string name="txt_Titulo">RentalVanOU</string>
+    <string name="btn_Registro">REGISTRO</string>
+    <string name="btn_Login">LOGIN</string>
+    <string name="txt_Login">LOGIN</string>
+    <string name="txt_Email">EMAIL</string>
+    <string name="txt_Password">PASSWORD</string>
+    <string name="btn_getLogin">GET_LOGIN</string>
+    <string name="txt_Registro">REGISTRO</string>
 </resources>
