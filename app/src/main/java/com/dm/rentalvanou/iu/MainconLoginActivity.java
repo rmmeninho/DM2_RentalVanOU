@@ -119,6 +119,7 @@ public class MainconLoginActivity extends AppCompatActivity {
         ArrayAdapter<String> adapter_marcas;
         String[] nfurgos;
         String[] marca;
+
         switch (aux){
             case "mayor altura":
                 nfurgos = rentalvan.copiaOrden(RentalVan.FURGONETAS,rentalvan.ordenaMayor(RentalVan.ALTURA));

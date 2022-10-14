@@ -38,7 +38,6 @@ public class FurgoviewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_furgoview);
 
-
         Intent intent = getIntent();
         String furgo = intent.getStringExtra("clave");
         rentalVan = new RentalVan();
