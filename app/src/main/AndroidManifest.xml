@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.dm.rentalvanou">
+    package="com.dm.rentalvanou.iu">
 
     <application
         android:allowBackup="true"
@@ -13,6 +13,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RentalVanOU"
         tools:targetApi="31">
+        <activity
+            android:name=".MainconLoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PersonalInfoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DepruebaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FurgoviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RegistroActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
