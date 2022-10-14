@@ -1,7 +1,5 @@
 package com.dm.rentalvanou.iu;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,53 +8,58 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.dm.rentalvanou.core.RentalVan;
 
+public class MainconLoginActivity extends AppCompatActivity {
 
-public class MainActivity extends AppCompatActivity {
-
-        ListView lvFurgos;
-        ListView lvMarcasFurgos;
-        ListView lvImgFurgos;
+    ListView lvFurgos;
+    ListView lvMarcasFurgos;
+    TextView tvUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_mainconlogin);
 
+        // USUARIO
+        tvUser = (TextView) this.findViewById(R.id.textViewMcLUser);
+        tvUser.setText("Rober");
 
-        // LOGIN
-        Button btnLogin = (Button) this.findViewById(R.id.buttonMainLogin);
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        // HISTORIAL
+        Button btnHistorial = (Button) this.findViewById(R.id.buttonMcLHistorial);
+        btnHistorial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                startActivity(new Intent(MainconLoginActivity.this, DepruebaActivity.class));
             }
         });
 
-        // REGISTRO
-        Button btnRegistro = (Button) this.findViewById(R.id.buttonMainRegistro);
-        btnRegistro.setOnClickListener(new View.OnClickListener() {
+        // TU CUENTA
+        Button btntuCuenta = (Button) this.findViewById(R.id.buttonMcLtuCuenta);
+        btntuCuenta.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, RegistroActivity.class));
+                startActivity(new Intent(MainconLoginActivity.this, PersonalInfoActivity.class));
             }
         });
 
 
         // FILTRO CARACTERÍSTICAS
-        Spinner spinnerFiltroCarac = (Spinner) this.findViewById(R.id.spinnerMainFiltroCarac);
-        ArrayAdapter<String> adapter_filtro_carac = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,RentalVan.FILTRO_CARAC);
+        Spinner spinnerFiltroCarac = (Spinner) this.findViewById(R.id.spinnerMcLFiltroCarac);
+        ArrayAdapter<String> adapter_filtro_carac = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, RentalVan.FILTRO_CARAC);
         spinnerFiltroCarac.setAdapter(adapter_filtro_carac);
 
         // VISUALIZACIÓN DE FURGONETAS
-        lvFurgos = (ListView) this.findViewById(R.id.arrayFurgos);
+        lvFurgos = (ListView) this.findViewById(R.id.McLArrayFurgos);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, RentalVan.FURGONETAS);
         lvFurgos.setAdapter(adapter);
 
 
-        lvMarcasFurgos = (ListView) this.findViewById(R.id.MainArrayMarcas);
+        lvMarcasFurgos = (ListView) this.findViewById(R.id.McLArrayMarcas);
         ArrayAdapter<String> adapter_marcas = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, RentalVan.MARCA);
         lvMarcasFurgos.setAdapter(adapter_marcas);
 
@@ -67,9 +70,9 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position >= 0 && position < RentalVan.FURGONETAS.length) {
                     String valor = parent.getItemAtPosition(position).toString();
-                   pasaInfo(valor);
+                    pasaInfo(valor);
                 } else {
-                    Toast.makeText(MainActivity.this, "La característica no existe", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainconLoginActivity.this, "La característica no existe", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -96,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 if (position >= 0 && position < RentalVan.FILTRO_CARAC.length) {
                     showFurgonetas(RentalVan.FILTRO_CARAC[position]);
                 } else {
-                    Toast.makeText(MainActivity.this, "La característica no existe", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainconLoginActivity.this, "La característica no existe", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -110,8 +113,8 @@ public class MainActivity extends AppCompatActivity {
     //showFurgos: es el método encargado de visualizar el listView con el filtro seleccionado.
     private void showFurgonetas(String aux){
         RentalVan rentalvan = new RentalVan();
-        lvFurgos = (ListView) this.findViewById(R.id.arrayFurgos);
-        lvMarcasFurgos = (ListView) this.findViewById(R.id.MainArrayMarcas);
+        lvFurgos = (ListView) this.findViewById(R.id.McLArrayFurgos);
+        lvMarcasFurgos = (ListView) this.findViewById(R.id.McLArrayMarcas);
         ArrayAdapter<String> adapter;
         ArrayAdapter<String> adapter_marcas;
         String[] nfurgos;

@@ -13,12 +13,20 @@ public class RegistroActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro);
 
-        Button btnVolver = (Button) this.findViewById(R.id.btn_Volver2);
+        Button btnVolver = (Button) this.findViewById(R.id.buttonRegistroVolver);
         btnVolver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(RegistroActivity.this, MainActivity.class));
             }
         });
+
+       Button btn_getRegistro = this.findViewById(R.id.buttonRegistroRegistro);
+       btn_getRegistro.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               startActivity(new Intent(RegistroActivity.this, DepruebaActivity.class));
+           }
+       });
     }
 }

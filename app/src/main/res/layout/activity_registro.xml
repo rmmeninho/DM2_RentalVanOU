@@ -8,12 +8,12 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/txt_Registro"
+            android:id="@+id/textViewRegistroTitulo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:gravity="center"
-            android:text="@string/txt_Registro"
+            android:text="@string/RegistroTitulo"
             android:textSize="34sp" />
 
         <LinearLayout
@@ -22,14 +22,14 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/txt_Registro_Nombre"
+                android:id="@+id/textViewRegistroNombre"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.20"
-                android:text="Nombre" />
+                android:text="@string/RegistroTextNombre" />
 
             <EditText
-                android:id="@+id/editTextNombre"
+                android:id="@+id/editTextRegistroNombre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.80"
@@ -45,14 +45,14 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/txt_Registro_Apellidos"
+                android:id="@+id/textViewRegistroApellidos"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.20"
-                android:text="Apellidos" />
+                android:text="@string/RegistroTextApellidos" />
 
             <EditText
-                android:id="@+id/editTextApellidos"
+                android:id="@+id/editTextRegistroApellidos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.80"
@@ -68,20 +68,20 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/txt_Registro_Email"
+                android:id="@+id/textViewRegistroEmail"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.20"
-                android:text="@string/txt_Email" />
+                android:text="@string/RegistroTextEmail" />
 
             <EditText
-                android:id="@+id/editTextTextEmailAddress"
+                android:id="@+id/editTextRegistroEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.8"
                 android:ems="10"
                 android:inputType="textEmailAddress"
-                android:text="email" />
+                android:text="Email" />
 
         </LinearLayout>
 
@@ -92,14 +92,14 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/txt_Registro_Password"
+                android:id="@+id/textViewRegistroPassword"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.20"
-                android:text="@string/txt_Password" />
+                android:text="@string/RegistroTextPassword" />
 
             <EditText
-                android:id="@+id/editTextNumberPassword"
+                android:id="@+id/editTextRegistroPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.8"
@@ -115,10 +115,11 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn_getLogin"
+                android:id="@+id/buttonRegistroRegistro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/btn_getLogin" />
+                android:text="@string/RegistroBotonGetRegistro"
+                android:textSize="20sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -128,12 +129,13 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn_Volver2"
+                android:id="@+id/buttonRegistroVolver"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_weight="1"
-                android:text="@string/btn_Volver" />
+                android:text="@string/RegistroBotonVolver"
+                android:textSize="20sp" />
         </LinearLayout>
 
     </LinearLayout>

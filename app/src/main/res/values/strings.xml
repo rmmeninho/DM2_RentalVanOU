@@ -1,13 +1,32 @@
 <resources>
     <string name="app_name">RentalVanOU</string>
-    <string name="btn_Volver">Volver</string>
-    <string name="btn_Volver2" type="id">VOLVER</string>
-    <string name="txt_Titulo">RentalVanOU</string>
-    <string name="btn_Registro">REGISTRO</string>
-    <string name="btn_Login">LOGIN</string>
-    <string name="txt_Login">LOGIN</string>
-    <string name="txt_Email">EMAIL</string>
-    <string name="txt_Password">PASSWORD</string>
-    <string name="btn_getLogin">GET_LOGIN</string>
-    <string name="txt_Registro">REGISTRO</string>
+    <!-- Main -->
+    <string name="MainTitulo">RentalVanOU</string>
+    <string name="MainBotonRegistro">REGISTRO</string>
+    <string name="MainSeleccionMarcaFurgo">SELECCIONA FURGONETA: </string>
+    <string name="MainBotonLogin">LOGIN</string>
+    <!-- Login -->
+    <string name="LoginTitulo">LOGIN</string>
+    <string name="LoginTextEmail">EMAIL</string>
+    <string name="LoginTextPassword">PASSWORD</string>
+    <string name="LoginBotonGetLogin">GET LOGIN</string>
+    <string name="LoginBotonVolver">VOLVER</string>
+    <!-- Registro -->
+    <string name="RegistroTitulo">REGISTRO</string>
+    <string name="RegistroTextNombre">NOMBRE</string>
+    <string name="RegistroTextApellidos">APELLIDOS</string>
+    <string name="RegistroTextEmail">EMAIL</string>
+    <string name="RegistroTextPassword">PASSWORD</string>
+    <string name="RegistroBotonGetRegistro">GET REGISTRO</string>
+    <string name="RegistroBotonVolver">VOLVER</string>
+    <!-- FurgoView -->
+    <string name="FurgoviewTextAltura">ALTURA:</string>
+    <string name="FurgoviewTextAncho">ANCHO:</string>
+    <string name="FurgoviewTextLargo">LARGO:</string>
+    <string name="FurgoviewTextCarga">CAPACIDAD:</string>
+    <string name="FurgoviewTextPrecio">PRECIO:</string>
+    <string name="FurgoviewTextMarca">MARCA</string>
+    <string name="FurgoviewTextModelo">MODELO</string>
+
+
 </resources>
