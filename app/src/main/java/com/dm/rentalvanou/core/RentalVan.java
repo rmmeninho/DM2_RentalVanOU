@@ -5,8 +5,14 @@ import android.graphics.drawable.Drawable;
 
 import com.dm.rentalvanou.iu.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class RentalVan {
     public static int[] IMAGEN_FURGOS = {R.drawable.jumper, R.drawable.boxer, R.drawable.kangoo,R.drawable.courier,R.drawable.scudo,R.drawable.vivaro};
@@ -22,7 +28,6 @@ public class RentalVan {
     //public static String[] FILTRO_MARCA = {"todas","Citroen","Peugeot","Renault","Ford","Fiat","Opel"};
     //public static String[] FILTRO_MODELO = {"todas", "Jumper","Boxer","Master","Transit","Ducato","Vivaro"};
     public static final double PRECIO_FIJO = 35.00;
-
 
     public RentalVan(){
 
@@ -60,14 +65,40 @@ public class RentalVan {
         return PRECIO_FIJO;
     }
 
-    public double calculaAlquiler(int pos){
+
+    public String calculaAlquiler(int pos,String fecha_ini, String fecha_fin){
         double toret = PRECIO_FIJO;
+        int total_dias = 1;
+        try{
+            total_dias = calcularDiasAlquiler(fecha_ini,fecha_fin);
+            if(total_dias < 0){
+                System.out.println("Hacer algo para gestionar el posible error");
+                total_dias = 0;
+            }
+        }
+        catch (Exception ex){
+            System.out.println("Error en la fecha");
+        }
 
         if(ANCHO[pos] >= 2050){
             toret += 20.00;
         }
 
-        return toret;
+        toret*=total_dias;
+
+        return String.valueOf(toret+" $");
+    }
+
+    public int calcularDiasAlquiler(String fecha_ini, String fecha_fin) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        Date f_ini = sdf.parse(fecha_ini);
+        Date f_fin = sdf.parse(fecha_fin);
+
+        long toret = f_fin.getTime() - f_ini.getTime();
+
+        TimeUnit time = TimeUnit.DAYS;
+        long diferencia = time.convert(toret, TimeUnit.MILLISECONDS);
+        return (int) diferencia;
     }
 
     // Método que encuentra la posición que ocupa el valor pasado por argumento en el array FURGONETAS
