@@ -27,6 +27,8 @@
     <string name="FurgoviewTextPrecio">PRECIO:</string>
     <string name="FurgoviewTextMarca">MARCA</string>
     <string name="FurgoviewTextModelo">MODELO</string>
+    <string name="FRTextMarca">MARCA</string>
+    <string name="FRTextModelo">MODELO</string>
 
 
 </resources>

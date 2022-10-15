@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (position >= 0 && position < RentalVan.FURGONETAS.length) {
                     String valor = parent.getItemAtPosition(position).toString();
-                   pasaInfo(valor);
+                    pasaInfo(valor);
                 } else {
                     Toast.makeText(MainActivity.this, "La característica no existe", Toast.LENGTH_SHORT).show();
                 }

@@ -2,6 +2,7 @@ package com.dm.rentalvanou.iu;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.os.TestLooperManager;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -16,6 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dm.rentalvanou.core.RentalVan;
+
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class FurgoviewActivity extends AppCompatActivity {
@@ -27,11 +33,12 @@ public class FurgoviewActivity extends AppCompatActivity {
     TextView textView_4;
     TextView textView_5;
     TextView textView_6;
-    TextView textView_7;
+
     ImageView imageView;
     RentalVan rentalVan;
     Button btn_Volver;
     Button btnRent;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,12 +56,11 @@ public class FurgoviewActivity extends AppCompatActivity {
         textView_4 = (TextView) this.findViewById(R.id.textViewFurgoviewAncho);
         textView_5 = (TextView) this.findViewById(R.id.textViewFurgoviewLargo);
         textView_6 = (TextView) this.findViewById(R.id.textViewFurgoviewCarga);
-        textView_7 = (TextView) this.findViewById(R.id.textViewFurgoviewPrecio);
 
-        imageView = (ImageView)this.findViewById(R.id.imageView2);
+        imageView = (ImageView) this.findViewById(R.id.imageView2);
 
         //BOTÓN VOLVER
-        btn_Volver = (Button) this.findViewById(R.id.buttonFurgoviewRent);
+        btn_Volver = (Button) this.findViewById(R.id.buttonFvVolver);
         btn_Volver.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,13 +71,15 @@ public class FurgoviewActivity extends AppCompatActivity {
         //BOTÓN RENT
         btnRent = (Button) this.findViewById(R.id.buttonFurgoviewRent);
         btnRent.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                Toast.makeText(FurgoviewActivity.this, "Trabajando en esta acción. \nDisculpen las molestias", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(FurgoviewActivity.this, MainActivity.class));
+               // Toast.makeText(FurgoviewActivity.this, "Trabajando en esta acción. \nDisculpen las molestias", Toast.LENGTH_SHORT).show();
+               // startActivity(new Intent(FurgoviewActivity.this, FurgoRentActivity.class));
+
+                pasaInfo();
             }
         });
-
 
         String marca = RentalVan.MARCA[furgo_select];
         String modelo = RentalVan.MODELO[furgo_select];
@@ -79,8 +87,6 @@ public class FurgoviewActivity extends AppCompatActivity {
         String ancho = String.valueOf(RentalVan.ANCHO[furgo_select]);
         String largo = String.valueOf(RentalVan.LARGO[furgo_select]);
         String capacidad = String.valueOf(RentalVan.CAPACIDAD[furgo_select]);
-        String precio = String.valueOf(rentalVan.calculaAlquiler(furgo_select));
-
 
         textView_1.setText(marca);
         textView_2.setText(modelo);
@@ -88,8 +94,13 @@ public class FurgoviewActivity extends AppCompatActivity {
         textView_4.setText(ancho);
         textView_5.setText(largo);
         textView_6.setText(capacidad);
-        textView_7.setText(precio);
 
         imageView.setImageResource(RentalVan.IMAGEN_FURGOS[furgo_select]);
+    }
+
+    private void pasaInfo() {
+        Intent intent = new Intent(this, FurgoRentActivity.class);
+        intent.putExtra("clave",furgo_select);
+        startActivity(intent);
     }
 }
