@@ -104,6 +104,20 @@ public class FurgoRentActivity extends AppCompatActivity {
             }
         });
 
+        btn_volver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(FurgoRentActivity.this, MainActivity.class));
+            }
+        });
+
+        btn_rent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(FurgoRentActivity.this, DepruebaActivity.class));
+            }
+        });
+
     }
 
     private void abrirCalendarioIni() {
@@ -172,5 +186,6 @@ public class FurgoRentActivity extends AppCompatActivity {
 
         aux.show();
     }
+
 
 }
