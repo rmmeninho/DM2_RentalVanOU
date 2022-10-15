@@ -21,21 +21,11 @@ public class RentalVan {
     //public static String[] FILTRO_CARAC = {"todas","mayor altura","menor altura","menor ancho","mayor ancho", "mayor capacidad", "menor capacidad"};
     //public static String[] FILTRO_MARCA = {"todas","Citroen","Peugeot","Renault","Ford","Fiat","Opel"};
     //public static String[] FILTRO_MODELO = {"todas", "Jumper","Boxer","Master","Transit","Ducato","Vivaro"};
-    public static final double PRECIO_FIJO = 30.00;
+    public static final double PRECIO_FIJO = 35.00;
 
 
     public RentalVan(){
 
-    }
-
-    public double calculaAlquiler(int pos){
-        double toret = PRECIO_FIJO;
-
-        if(ANCHO[pos] >= 2050){
-            toret += 20.00;
-        }
-
-        return toret;
     }
 
     public String getFurgoneta(int pos){
@@ -68,6 +58,16 @@ public class RentalVan {
 
     public double getPrecio(){
         return PRECIO_FIJO;
+    }
+
+    public double calculaAlquiler(int pos){
+        double toret = PRECIO_FIJO;
+
+        if(ANCHO[pos] >= 2050){
+            toret += 20.00;
+        }
+
+        return toret;
     }
 
     // Método que encuentra la posición que ocupa el valor pasado por argumento en el array FURGONETAS
@@ -120,7 +120,6 @@ public class RentalVan {
         }
         return toret;
     }
-
 
     public String toString(){
         StringBuilder toret = new StringBuilder();

@@ -14,9 +14,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.dm.rentalvanou.core.RentalVan;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class FurgoRentActivity extends AppCompatActivity {
 
+    RentalVan rentalVan;
     // VARIABLES CALENDARIO
     String fecha_ini;
     String fecha_fin;
@@ -43,8 +46,14 @@ public class FurgoRentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_furgorent);
 
+        rentalVan = new RentalVan();
         // DATOS DE OTRA ACTIVITY
         Intent intent = getIntent();
+        // INICIO FECHA ACTUAL
+        Calendar hoy = Calendar.getInstance();
+        fecha_ini = String.valueOf(hoy.get(Calendar.YEAR))+"/"+String.valueOf(hoy.get(Calendar.MONTH))+"/"+String.valueOf(hoy.get(Calendar.DAY_OF_MONTH));
+        hoy.add(Calendar.DAY_OF_MONTH,1);
+        fecha_fin = String.valueOf(hoy.get(Calendar.YEAR))+"/"+String.valueOf(hoy.get(Calendar.MONTH))+"/"+String.valueOf(hoy.get(Calendar.DAY_OF_MONTH));
 
         // INICIALIZACIÓN DE VARIABLES
         imgFurgoSelec = (ImageView) this.findViewById(R.id.imageViewRentFurgo);
@@ -63,9 +72,18 @@ public class FurgoRentActivity extends AppCompatActivity {
         String marca = RentalVan.MARCA[pos_furgo];
         String modelo = RentalVan.MODELO[pos_furgo];
 
+
+        double coste = rentalVan.calculaAlquiler(pos_furgo);
+
         imgFurgoSelec.setImageResource(RentalVan.IMAGEN_FURGOS[pos_furgo]);
         tvMarca.setText(marca);
         tvModelo.setText(modelo);
+
+        tvFecha_ini.setText(fecha_ini);
+        tvFecha_fin.setText(fecha_fin);
+
+        tvCoste.setText(String.valueOf(coste));
+
 
     }
 
@@ -84,4 +102,5 @@ public class FurgoRentActivity extends AppCompatActivity {
 
         aux.show();
     }
+
 }
