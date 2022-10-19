@@ -2,6 +2,9 @@ package com.dm.rentalvanou.iu;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -23,4 +26,34 @@ public class DepruebaActivity extends AppCompatActivity {
             }
         });
     }
+    // Ejemplos en clase sobre menus
+     // menu contextual
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        this.getMenuInflater().inflate( R.menu.main_menu, menu );
+        return true;
+    }
+
+    @Override
+     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+     super.onCreateContextMenu(menu, v, menuInfo);
+     getMenuInflater().inflate(R.menu.main_menu, menu);
+     }
+
+   /*  @Override
+     public boolean onOptionsItemSelected(MenuItem item) {
+
+     boolean toret = false;
+     switch(item.getItemId()){
+     case R.id.te:
+
+     default: super.onOptionsItemSelected(item);
+
+     }
+     }
+*/
+
 }

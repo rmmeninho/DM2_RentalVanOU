@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="Suma"
+        android:id="@+id/opSuma" />
+    <item android:title="Resta"
+        android:id="@+id/opResta" />
+    <item android:title="Multiplica"
+        android:id="@+id/opMultiplica" />
+    <item android:title="Divide"
+        android:id="@+id/opDivide" />
+</menu>

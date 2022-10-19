@@ -141,11 +141,7 @@ public class FurgoRentActivity extends AppCompatActivity {
                 }
 
                 String ncoste = rentalVan.calculaAlquiler(pos_furgo,fecha_ini,fecha_fin);
-/*
-                if(Integer.parseInt(ncoste) < 0){
-                  ncoste = "0.0";
-                }
-*/
+
                 tvCoste.setText(ncoste);
             }
         }, anho, mes, dia);
@@ -174,11 +170,7 @@ public class FurgoRentActivity extends AppCompatActivity {
                 }
 
                 String ncoste = rentalVan.calculaAlquiler(pos_furgo,fecha_ini,fecha_fin);
-/*
-                if(Integer.parseInt(ncoste) < 0){
-                  ncoste = "0.0";
-                }
-*/
+
                 tvCoste.setText(ncoste);
 
             }
