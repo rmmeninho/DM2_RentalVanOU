@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.TestLooperManager;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -33,6 +34,7 @@ public class FurgoviewActivity extends AppCompatActivity {
     TextView textView_4;
     TextView textView_5;
     TextView textView_6;
+    TextView textView_7;
 
     ImageView imageView;
     RentalVan rentalVan;
@@ -56,6 +58,7 @@ public class FurgoviewActivity extends AppCompatActivity {
         textView_4 = (TextView) this.findViewById(R.id.textViewFurgoviewAncho);
         textView_5 = (TextView) this.findViewById(R.id.textViewFurgoviewLargo);
         textView_6 = (TextView) this.findViewById(R.id.textViewFurgoviewCarga);
+        textView_7 = (TextView) this.findViewById(R.id.textViewFurgoviewCombustible);
 
         imageView = (ImageView) this.findViewById(R.id.imageView2);
 
@@ -87,6 +90,7 @@ public class FurgoviewActivity extends AppCompatActivity {
         String ancho = String.valueOf(RentalVan.ANCHO[furgo_select]);
         String largo = String.valueOf(RentalVan.LARGO[furgo_select]);
         String capacidad = String.valueOf(RentalVan.CAPACIDAD[furgo_select]);
+        String combustible = String.valueOf(RentalVan.COMBUSTIBLE[furgo_select]);
 
         textView_1.setText(marca);
         textView_2.setText(modelo);
@@ -94,8 +98,11 @@ public class FurgoviewActivity extends AppCompatActivity {
         textView_4.setText(ancho);
         textView_5.setText(largo);
         textView_6.setText(capacidad);
+        textView_7.setText(combustible);
 
         imageView.setImageResource(RentalVan.IMAGEN_FURGOS[furgo_select]);
+
+
     }
 
     private void pasaInfo() {

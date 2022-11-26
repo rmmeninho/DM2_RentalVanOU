@@ -73,7 +73,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="ALTURA" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -95,7 +94,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="ANCHO" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -117,7 +115,6 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="LARGO" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -125,7 +122,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingTop="20sp">
-                >
+
 
                 <TextView
                     android:id="@+id/FurgoviewTituloCapacidad"
@@ -140,7 +137,28 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="CAPACIDAD" />
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="20sp">
+
+
+                <TextView
+                    android:id="@+id/FurgoviewTituloCombustible"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/FurgoviewTextCombustible" />
+
+                <TextView
+                    android:id="@+id/textViewFurgoviewCombustible"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="COMBUSTIBLE" />
             </LinearLayout>
 
         </LinearLayout>

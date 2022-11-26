@@ -23,6 +23,8 @@ public class RentalVan {
     public static int[] ANCHO = {2050,2050,1829,1770,2050,1956};
     public static int[] LARGO = {4963,5413,3871,4157,6363,4999};
     public static int[] CAPACIDAD = {12,15,3,4,17,7};
+    private static String[] combustibles = {"DIESEL", "GAS", "ELECTRICO"};
+    public static String[] COMBUSTIBLE = {combustibles[0], combustibles[0],combustibles[0],combustibles[0],combustibles[0],combustibles[0]};
     public static String[] FILTRO_CARAC = {"todas","Disponibles","mayor altura","mayor ancho","mayor largo","mayor capacidad"};
     //public static String[] FILTRO_CARAC = {"todas","mayor altura","menor altura","menor ancho","mayor ancho", "mayor capacidad", "menor capacidad"};
     //public static String[] FILTRO_MARCA = {"todas","Citroen","Peugeot","Renault","Ford","Fiat","Opel"};
@@ -65,9 +67,27 @@ public class RentalVan {
         return PRECIO_FIJO;
     }
 
+    public String getCombustible(int pos){ return COMBUSTIBLE[pos];}
+
+    public void setTipoCombustible(int pos, int tipo){ COMBUSTIBLE[pos] = combustibles[tipo];}
+
+
+    public double calculaTipoCombustible(int pos){
+        double toret = PRECIO_FIJO;
+
+        if(COMBUSTIBLE[pos] == "GAS"){
+            return toret+=5.00;
+        }
+        else if(COMBUSTIBLE[pos] == "ELECTRICO"){
+            return toret+=10.00;
+        }
+        else{
+            return toret;
+        }
+    }
 
     public String calculaAlquiler(int pos,String fecha_ini, String fecha_fin){
-        double toret = PRECIO_FIJO;
+        double toret = calculaTipoCombustible(pos);
         int total_dias = 1;
         try{
             total_dias = calcularDiasAlquiler(fecha_ini,fecha_fin);
@@ -86,7 +106,7 @@ public class RentalVan {
 
         toret*=total_dias;
 
-        return String.valueOf(toret+" $");
+        return String.valueOf(toret+" €");
     }
 
     public int calcularDiasAlquiler(String fecha_ini, String fecha_fin) throws ParseException {

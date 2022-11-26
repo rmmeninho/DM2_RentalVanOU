@@ -3,6 +3,9 @@ package com.dm.rentalvanou.iu;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -11,10 +14,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dm.rentalvanou.core.RentalVan;
+
+import org.w3c.dom.Text;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -29,6 +35,7 @@ public class FurgoRentActivity extends AppCompatActivity {
     public static String fecha_ini;
     public static String fecha_fin;
     // DATOS VEHÍCULO
+    TextView tipo_combustible;
     ImageView imgFurgoSelec;
     TextView tvMarca;
     TextView tvModelo;
@@ -59,6 +66,9 @@ public class FurgoRentActivity extends AppCompatActivity {
         hoy.add(Calendar.DAY_OF_MONTH,1);
         fecha_fin = String.valueOf(hoy.get(Calendar.YEAR))+"/"+String.valueOf(hoy.get(Calendar.MONTH)+1)+"/"+String.valueOf(hoy.get(Calendar.DAY_OF_MONTH));
 
+        //REGISTRO DE MENU CONTEXTUAL
+        tipo_combustible = (TextView) this.findViewById(R.id.textViewFROpcionesConsumo);
+        this.registerForContextMenu(tipo_combustible);
 
         // INICIALIZACIÓN DE VARIABLES
         imgFurgoSelec = (ImageView) this.findViewById(R.id.imageViewRentFurgo);
@@ -90,6 +100,7 @@ public class FurgoRentActivity extends AppCompatActivity {
 
         tvCoste.setText(coste);
 
+
        tvFecha_ini.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
@@ -118,6 +129,41 @@ public class FurgoRentActivity extends AppCompatActivity {
             }
         });
 
+    }
+    //A continuación se imnplementa el menu
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if ( v.getId() == R.id.textViewFROpcionesConsumo){
+            this.getMenuInflater().inflate( R.menu.furgorent_menu, menu);
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        boolean toret = false;
+
+        switch(item.getItemId()){
+            case R.id.opGas:
+                this.rentalVan.setTipoCombustible(pos_furgo, 1);
+                toret = true;
+                break;
+            case R.id.opElectrico:
+                this.rentalVan.setTipoCombustible(pos_furgo, 2);
+                toret = true;
+                break;
+            default:
+                this.rentalVan.setTipoCombustible(pos_furgo, 0);
+                toret = true;
+                break;
+        }
+        this.tipo_combustible.setText(RentalVan.COMBUSTIBLE[pos_furgo]);
+
+        String ncoste = rentalVan.calculaAlquiler(pos_furgo,fecha_ini,fecha_fin);
+        tvCoste.setText(ncoste);
+
+        return toret;
     }
 
     private void abrirCalendarioIni() {
