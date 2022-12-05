@@ -17,13 +17,7 @@
             android:name=".FurgoRentActivity"
             android:exported="false" />
         <activity
-            android:name=".MainconLoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".PersonalInfoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".DepruebaActivity"
+            android:name=".HistoricActivity"
             android:exported="false" />
         <activity
             android:name=".FurgoviewActivity"
@@ -34,8 +28,6 @@
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
-
-
         <activity
             android:name=".MainActivity"
             android:exported="true">

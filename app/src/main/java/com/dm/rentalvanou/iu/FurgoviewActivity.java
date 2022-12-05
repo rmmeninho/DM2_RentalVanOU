@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.TestLooperManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dm.rentalvanou.core.RentalVan;
+import com.dm.rentalvanou.model.DBManager;
 
 import java.sql.Array;
 import java.util.ArrayList;
@@ -35,22 +38,43 @@ public class FurgoviewActivity extends AppCompatActivity {
     TextView textView_5;
     TextView textView_6;
     TextView textView_7;
+    TextView tvUser;
 
     ImageView imageView;
     RentalVan rentalVan;
     Button btn_Volver;
     Button btnRent;
-
+    String user_name = null;
+    String user_email = null;
+    SQLiteDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_furgoview);
 
+        DBManager dbManager = DBManager.getManager(this.getApplicationContext());
+        db = dbManager.getReadableDatabase();
+        rentalVan = new RentalVan(db);
+
         Intent intent = getIntent();
         String furgo = intent.getStringExtra("clave");
-        rentalVan = new RentalVan();
+        try{
+            user_name = intent.getStringExtra("uname");
+            user_email = intent.getStringExtra("uemail");
+        }
+        catch (Exception ex){
+            Log.e("ERROR", ex.getMessage());
+            Toast.makeText(FurgoviewActivity.this, "UNAME: NULL", Toast.LENGTH_SHORT).show();
+            Toast.makeText(FurgoviewActivity.this, "UEMAIL: NULL", Toast.LENGTH_SHORT).show();
+        }
+
         furgo_select = rentalVan.getPosicion(furgo);
+
+        if(user_name != null){
+            tvUser = findViewById(R.id.textViewMainUser);
+            tvUser.setText(user_name);
+        }
 
         textView_1 = (TextView) this.findViewById(R.id.textViewFurgoviewMarca);
         textView_2 = (TextView) this.findViewById(R.id.textViewFurgoviewModelo);
@@ -74,23 +98,19 @@ public class FurgoviewActivity extends AppCompatActivity {
         //BOTÓN RENT
         btnRent = (Button) this.findViewById(R.id.buttonFurgoviewRent);
         btnRent.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
-               // Toast.makeText(FurgoviewActivity.this, "Trabajando en esta acción. \nDisculpen las molestias", Toast.LENGTH_SHORT).show();
-               // startActivity(new Intent(FurgoviewActivity.this, FurgoRentActivity.class));
-
                 pasaInfo();
             }
         });
 
-        String marca = RentalVan.MARCA[furgo_select];
-        String modelo = RentalVan.MODELO[furgo_select];
-        String altura = String.valueOf(RentalVan.ALTURA[furgo_select]);
-        String ancho = String.valueOf(RentalVan.ANCHO[furgo_select]);
-        String largo = String.valueOf(RentalVan.LARGO[furgo_select]);
-        String capacidad = String.valueOf(RentalVan.CAPACIDAD[furgo_select]);
-        String combustible = String.valueOf(RentalVan.COMBUSTIBLE[furgo_select]);
+        String marca = rentalVan.getMarca(furgo_select);
+        String modelo = rentalVan.getModelo(furgo_select);
+        String altura = String.valueOf(rentalVan.getAltura(furgo_select));
+        String ancho = String.valueOf(rentalVan.getAncho(furgo_select));
+        String largo = String.valueOf(rentalVan.getLargo(furgo_select));
+        String capacidad = String.valueOf(rentalVan.getCapacidad(furgo_select));
+        String combustible = String.valueOf(rentalVan.getCombustible(furgo_select));
 
         textView_1.setText(marca);
         textView_2.setText(modelo);
@@ -100,14 +120,18 @@ public class FurgoviewActivity extends AppCompatActivity {
         textView_6.setText(capacidad);
         textView_7.setText(combustible);
 
-        imageView.setImageResource(RentalVan.IMAGEN_FURGOS[furgo_select]);
+        imageView.setImageResource(rentalVan.getImgVan(furgo_select));
 
 
     }
 
     private void pasaInfo() {
         Intent intent = new Intent(this, FurgoRentActivity.class);
-        intent.putExtra("clave",furgo_select);
+        intent.putExtra("clave", furgo_select);
+        if(user_name != null){
+            intent.putExtra("uname", user_name);
+            intent.putExtra("uemail", user_email);
+        }
         startActivity(intent);
     }
 }

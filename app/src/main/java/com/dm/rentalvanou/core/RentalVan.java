@@ -1,9 +1,16 @@
 package com.dm.rentalvanou.core;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.view.Display;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.dm.rentalvanou.iu.R;
+import com.dm.rentalvanou.model.DBManager;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,7 +21,22 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class RentalVan {
+public class RentalVan extends AppCompatActivity {
+
+    public static String[] FILTRO_CARAC = {"todas","Disponibles","mayor altura","mayor ancho","mayor largo","mayor capacidad"};
+    public static final double PRECIO_FIJO = 35.00;
+    private String[] combustibles = {"DIESEL", "GAS", "ELECTRICO"};
+    private int[] IMAGEN_FURGOS;
+    public static String[] FURGONETAS;
+    private String[] MARCA;
+    private String[] MODELO;
+    private int[] ALTURA;
+    private int[] ANCHO;
+    private int[] LARGO;
+    private int[] CAPACIDAD;
+    private String[] COMBUSTIBLE;
+    SQLiteDatabase db;
+    /*
     public static int[] IMAGEN_FURGOS = {R.drawable.jumper, R.drawable.boxer, R.drawable.kangoo,R.drawable.courier,R.drawable.scudo,R.drawable.vivaro};
     public static String[] FURGONETAS = {"Furgo 1","Furgo 2","Furgo 3","Furgo 4","Furgo 5","Furgo 6"};
     public static String[] MARCA = {"Citroen","Peugeot","Renault","Ford","Fiat","Opel"};
@@ -23,20 +45,81 @@ public class RentalVan {
     public static int[] ANCHO = {2050,2050,1829,1770,2050,1956};
     public static int[] LARGO = {4963,5413,3871,4157,6363,4999};
     public static int[] CAPACIDAD = {12,15,3,4,17,7};
-    private static String[] combustibles = {"DIESEL", "GAS", "ELECTRICO"};
     public static String[] COMBUSTIBLE = {combustibles[0], combustibles[0],combustibles[0],combustibles[0],combustibles[0],combustibles[0]};
-    public static String[] FILTRO_CARAC = {"todas","Disponibles","mayor altura","mayor ancho","mayor largo","mayor capacidad"};
-    //public static String[] FILTRO_CARAC = {"todas","mayor altura","menor altura","menor ancho","mayor ancho", "mayor capacidad", "menor capacidad"};
-    //public static String[] FILTRO_MARCA = {"todas","Citroen","Peugeot","Renault","Ford","Fiat","Opel"};
-    //public static String[] FILTRO_MODELO = {"todas", "Jumper","Boxer","Master","Transit","Ducato","Vivaro"};
-    public static final double PRECIO_FIJO = 35.00;
+    */
 
-    public RentalVan(){
+    public RentalVan(SQLiteDatabase db){
+        this.db = db;
+        Cursor cursorVan = this.db.query(DBManager.TABLA_VAN, null, null, null, null, null, null );
+        int size = cursorVan.getCount();
 
+        FURGONETAS = new String[size];
+        IMAGEN_FURGOS = new int[size];
+        MARCA = new String[size];
+        MODELO = new String[size];
+        ALTURA = new int[size];
+        ANCHO = new int[size];
+        LARGO = new int[size];
+        CAPACIDAD = new int[size];
+        COMBUSTIBLE = new String[size];
+
+        if(cursorVan.moveToFirst()){
+            int i = 0;
+            do {
+                FURGONETAS[i] = String.valueOf(i+1);
+                IMAGEN_FURGOS[i] =  cursorVan.getInt(1);
+                MARCA[i] = cursorVan.getString(2);
+                MODELO[i] = cursorVan.getString(3);
+                ALTURA[i] = cursorVan.getInt(4);
+                ANCHO[i] = cursorVan.getInt(5);
+                LARGO[i] = cursorVan.getInt(6);
+                CAPACIDAD[i] = cursorVan.getInt(7);
+                COMBUSTIBLE[i] = cursorVan.getString(8);
+                i++;
+            } while ( cursorVan.moveToNext() );
+        }
+        cursorVan.close();
     }
+
+    public int[] getImgVans(){
+        return IMAGEN_FURGOS;
+    }
+
+    public String[] getMarcas(){
+        return MARCA;
+    }
+
+    public String[] getModelos(){
+        return MODELO;
+    }
+
+    public int[] getAlturas(){
+        return ALTURA;
+    }
+
+    public int[] getAnchos(){
+        return ANCHO;
+    }
+
+    public int[] getLargos(){
+        return LARGO;
+    }
+
+    public int[] getCapacidades(){
+        return CAPACIDAD;
+    }
+
+    public String[] getCombustibles(){
+        return COMBUSTIBLE;
+    }
+
 
     public String getFurgoneta(int pos){
         return FURGONETAS[pos];
+    }
+
+    public int getImgVan(int pos){
+        return IMAGEN_FURGOS[pos];
     }
 
     public String getMarca(int pos){
@@ -86,7 +169,7 @@ public class RentalVan {
         }
     }
 
-    public String calculaAlquiler(int pos,String fecha_ini, String fecha_fin){
+    public Double calculaAlquiler(int pos,String fecha_ini, String fecha_fin){
         double toret = calculaTipoCombustible(pos);
         int total_dias = 1;
         try{
@@ -106,7 +189,7 @@ public class RentalVan {
 
         toret*=total_dias;
 
-        return String.valueOf(toret+" €");
+        return toret;
     }
 
     public int calcularDiasAlquiler(String fecha_ini, String fecha_fin) throws ParseException {
@@ -124,6 +207,7 @@ public class RentalVan {
     // Método que encuentra la posición que ocupa el valor pasado por argumento en el array FURGONETAS
     //Devuelve la posición ocupada. Valor de tipo int. Si no encuentra la posición devuelve -1
     public int getPosicion(String valor){
+        //String[] vans = loadVans();
         int toret = -1;
         for(int i = 0; i < FURGONETAS.length; i++){
             if(FURGONETAS[i].equals(valor)){
@@ -131,6 +215,8 @@ public class RentalVan {
             }
         }
         return toret;
+
+
     }
 
     // Método que ordena de mayor a menor los elementos de un array int[]
@@ -184,6 +270,4 @@ public class RentalVan {
         }
         return toret.toString();
     }
-
-
 }

@@ -35,7 +35,15 @@
                 android:gravity="center"
                 android:text="@string/MainTitulo"
                 android:textSize="32sp" />
+
+            <TextView
+                android:id="@+id/TextViewUser"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.75"
+                android:text="Anonimous" />
         </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -108,47 +116,7 @@
                     android:gravity="center" />
 
             </LinearLayout>
-            <!--
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/textViewMainFiltroMarca"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Marca" />
-
-                <Spinner
-                    android:id="@+id/spinnerMainFiltroMarca"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/textViewMainFiltroModelo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Modelo" />
-
-                <Spinner
-                    android:id="@+id/spinnerMainFiltroModelo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-            </LinearLayout>
-        -->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -159,7 +127,9 @@
                     android:id="@+id/arrayFurgos"
                     android:layout_width="208dp"
                     android:layout_height="343dp"
-                    android:layout_weight="0.25"></ListView>
+                    android:layout_weight="0.25">
+
+                </ListView>
 
                 <ListView
                     android:id="@+id/MainArrayMarcas"

@@ -2,11 +2,12 @@ package com.dm.rentalvanou.iu;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -19,27 +20,26 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.dm.rentalvanou.core.RentalVan;
-
-import org.w3c.dom.Text;
+import com.dm.rentalvanou.model.DBManager;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class FurgoRentActivity extends AppCompatActivity {
 
-    RentalVan rentalVan;
+    String user_name = null;
+    String user_email = null;
     int pos_furgo;
-    String coste;
+    double coste;
     // VARIABLES CALENDARIO
     public static String fecha_ini;
     public static String fecha_fin;
     // DATOS VEHÍCULO
-    TextView tipo_combustible;
+    TextView tvTipo_combustible;
     ImageView imgFurgoSelec;
     TextView tvMarca;
     TextView tvModelo;
     // DATOS USUARIO
+    TextView tvUser;
     TextView tvNombre;
     TextView tvApellidos;
     TextView tvEmail;
@@ -52,14 +52,37 @@ public class FurgoRentActivity extends AppCompatActivity {
     Button btn_volver;
     Button btn_rent;
 
+
+    SQLiteDatabase db;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_furgorent);
 
-        rentalVan = new RentalVan();
+        // OPEN BD
+        DBManager dbManager = DBManager.getManager(this.getApplicationContext());
+        db = dbManager.getReadableDatabase();
+        RentalVan rentalVan = new RentalVan(db);
+
         // DATOS DE OTRA ACTIVITY
         Intent intent = getIntent();
+        pos_furgo = intent.getIntExtra("clave",0);
+        try{
+            user_name = intent.getStringExtra("uname");
+            user_email = intent.getStringExtra("uemail");
+        }
+        catch (Exception ex){
+            Log.e("ERROR", ex.getMessage());
+            Toast.makeText(FurgoRentActivity.this, "UNAME: NULL", Toast.LENGTH_SHORT).show();
+            Toast.makeText(FurgoRentActivity.this, "UEMAIL: NULL", Toast.LENGTH_SHORT).show();
+        }
+
+        if(user_name != null){
+            tvUser = findViewById(R.id.textViewFRUser);
+            tvUser.setText(user_name);
+        }
+
         // INICIO FECHA ACTUAL
         Calendar hoy = Calendar.getInstance();
         fecha_ini = String.valueOf(hoy.get(Calendar.YEAR))+"/"+String.valueOf(hoy.get(Calendar.MONTH)+1)+"/"+String.valueOf(hoy.get(Calendar.DAY_OF_MONTH));
@@ -67,8 +90,8 @@ public class FurgoRentActivity extends AppCompatActivity {
         fecha_fin = String.valueOf(hoy.get(Calendar.YEAR))+"/"+String.valueOf(hoy.get(Calendar.MONTH)+1)+"/"+String.valueOf(hoy.get(Calendar.DAY_OF_MONTH));
 
         //REGISTRO DE MENU CONTEXTUAL
-        tipo_combustible = (TextView) this.findViewById(R.id.textViewFROpcionesConsumo);
-        this.registerForContextMenu(tipo_combustible);
+        tvTipo_combustible = (TextView) this.findViewById(R.id.textViewFROpcionesConsumo);
+        this.registerForContextMenu(tvTipo_combustible);
 
         // INICIALIZACIÓN DE VARIABLES
         imgFurgoSelec = (ImageView) this.findViewById(R.id.imageViewRentFurgo);
@@ -83,23 +106,37 @@ public class FurgoRentActivity extends AppCompatActivity {
         btn_volver = (Button) this.findViewById(R.id.buttonFRVolver);
         btn_rent = (Button) this.findViewById(R.id.buttonFRRent);
 
-        pos_furgo = intent.getIntExtra("clave",0);
-        String marca = RentalVan.MARCA[pos_furgo];
-        String modelo = RentalVan.MODELO[pos_furgo];
 
+        String marca = rentalVan.getMarca(pos_furgo);
+        String modelo = rentalVan.getModelo(pos_furgo);
+        String tipo_combustible = rentalVan.getCombustible(pos_furgo);
+
+        // RECUPERA DATOS DESDE LA BD
+        if(user_name != null){
+            Cursor user_cursor = dbManager.getUser(db, user_email);
+            if(user_cursor.moveToFirst()){
+                do{
+                    tvNombre.setText(user_cursor.getString(1));
+                    tvApellidos.setText(user_cursor.getString(2));
+                    tvEmail.setText(user_cursor.getString(3));
+                }while(user_cursor.moveToNext());
+            }
+        }
 
         coste = rentalVan.calculaAlquiler(pos_furgo,fecha_ini,fecha_fin);
 
-        imgFurgoSelec.setImageResource(RentalVan.IMAGEN_FURGOS[pos_furgo]);
+        imgFurgoSelec.setImageResource(rentalVan.getImgVan(pos_furgo));
         tvMarca.setText(marca);
         tvModelo.setText(modelo);
-
+        rentalVan.setTipoCombustible(pos_furgo, 0);
+        tvTipo_combustible.setText(tipo_combustible);
 
         tvFecha_ini.setText(fecha_ini);
         tvFecha_fin.setText(fecha_fin);
 
-        tvCoste.setText(coste);
+        tvCoste.setText(String.valueOf(coste)+" €");
 
+        Toast.makeText(FurgoRentActivity.this, "USER_EMAIL " + tvEmail.getText().toString(), Toast.LENGTH_SHORT).show();
 
        tvFecha_ini.setOnClickListener(new View.OnClickListener() {
            @Override
@@ -119,17 +156,58 @@ public class FurgoRentActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(FurgoRentActivity.this, MainActivity.class));
+
             }
         });
 
         btn_rent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(FurgoRentActivity.this, DepruebaActivity.class));
+                if(user_name != null) {
+                    int img = rentalVan.getImgVan(pos_furgo);
+                    String user_email = tvEmail.getText().toString();
+                    String combustible = tvTipo_combustible.getText().toString();
+
+                    //
+                    Cursor cursor_van = dbManager.searchVan(db, img);
+                    String id_van = "";
+                    if (cursor_van.moveToFirst()) {
+                        do {
+                            id_van = String.valueOf(cursor_van.getInt(0));
+                        } while (cursor_van.moveToNext());
+                    }
+                    cursor_van.close();
+                    //
+                    Cursor cursor_user = dbManager.searchUser(db, user_email);
+                    String id_user = "";
+                    if (cursor_user.moveToFirst()) {
+                        do {
+                            id_user = String.valueOf(cursor_user.getInt(0));
+                        } while (cursor_user.moveToNext());
+                    }
+                    cursor_user.close();
+                    String[] toret = {id_van, combustible, id_user, fecha_ini, fecha_fin, String.valueOf(coste)};
+                    dbManager.addRents(toret);
+                    pasaInfo();
+                }
+                else{
+                    Toast.makeText(FurgoRentActivity.this, "Debes Logearte", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(FurgoRentActivity.this, LoginActivity.class));
+                }
             }
         });
 
     }
+
+    private void pasaInfo() {
+        Intent intent = new Intent(this, HistoricActivity.class);
+        if(user_name != null){
+            intent.putExtra("uname", user_name);
+            intent.putExtra("uemail", user_email);
+        }
+        startActivity(intent);
+    }
+
     //A continuación se imnplementa el menu
 
     @Override
@@ -143,30 +221,31 @@ public class FurgoRentActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {
         boolean toret = false;
-
+        RentalVan rentalVan = new RentalVan(db);
         switch(item.getItemId()){
             case R.id.opGas:
-                this.rentalVan.setTipoCombustible(pos_furgo, 1);
+                rentalVan.setTipoCombustible(pos_furgo, 1);
                 toret = true;
                 break;
             case R.id.opElectrico:
-                this.rentalVan.setTipoCombustible(pos_furgo, 2);
+                rentalVan.setTipoCombustible(pos_furgo, 2);
                 toret = true;
                 break;
             default:
-                this.rentalVan.setTipoCombustible(pos_furgo, 0);
+                rentalVan.setTipoCombustible(pos_furgo, 0);
                 toret = true;
                 break;
         }
-        this.tipo_combustible.setText(RentalVan.COMBUSTIBLE[pos_furgo]);
+        this.tvTipo_combustible.setText(rentalVan.getCombustible(pos_furgo));
 
-        String ncoste = rentalVan.calculaAlquiler(pos_furgo,fecha_ini,fecha_fin);
-        tvCoste.setText(ncoste);
+        coste = rentalVan.calculaAlquiler(pos_furgo,fecha_ini,fecha_fin);
+        tvCoste.setText(String.valueOf(coste)+" €");
 
         return toret;
     }
 
     private void abrirCalendarioIni() {
+        RentalVan rentalVan = new RentalVan(db);
         Calendar calendario = Calendar.getInstance();
         int anho = calendario.get(Calendar.YEAR);
         int mes = calendario.get(Calendar.MONTH)+1;
@@ -186,9 +265,9 @@ public class FurgoRentActivity extends AppCompatActivity {
                     System.out.println("Error");
                 }
 
-                String ncoste = rentalVan.calculaAlquiler(pos_furgo,fecha_ini,fecha_fin);
+                coste = rentalVan.calculaAlquiler(pos_furgo,fecha_ini,fecha_fin);
 
-                tvCoste.setText(ncoste);
+                tvCoste.setText(String.valueOf(coste)+" €");
             }
         }, anho, mes, dia);
 
@@ -196,6 +275,7 @@ public class FurgoRentActivity extends AppCompatActivity {
     }
 
     private void abrirCalendarioFin() {
+        RentalVan rentalVan = new RentalVan(db);
         Calendar calendario = Calendar.getInstance();
         int anho = calendario.get(Calendar.YEAR);
         int mes = calendario.get(Calendar.MONTH)+1;
@@ -215,9 +295,9 @@ public class FurgoRentActivity extends AppCompatActivity {
                     System.out.println("Error");
                 }
 
-                String ncoste = rentalVan.calculaAlquiler(pos_furgo,fecha_ini,fecha_fin);
+                coste = rentalVan.calculaAlquiler(pos_furgo,fecha_ini,fecha_fin);
 
-                tvCoste.setText(ncoste);
+                tvCoste.setText(String.valueOf(coste)+" €");
 
             }
         }, anho, mes, dia);

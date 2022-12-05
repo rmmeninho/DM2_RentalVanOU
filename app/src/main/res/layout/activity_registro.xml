@@ -35,7 +35,7 @@
                 android:layout_weight="0.80"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Nombre" />
+                android:text="Rober" />
 
         </LinearLayout>
 
@@ -58,7 +58,7 @@
                 android:layout_weight="0.80"
                 android:ems="10"
                 android:inputType="textPersonName"
-                android:text="Apellidos" />
+                android:text="Martinez" />
 
         </LinearLayout>
 
@@ -81,7 +81,7 @@
                 android:layout_weight="0.8"
                 android:ems="10"
                 android:inputType="textEmailAddress"
-                android:text="Email" />
+                android:text="rober@esei.es" />
 
         </LinearLayout>
 
@@ -104,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.8"
                 android:ems="10"
-                android:inputType="numberPassword" />
+                android:inputType="textPassword" />
         </LinearLayout>
 
         <LinearLayout
