@@ -1,7 +1,6 @@
 package com.dm.rentalvanou.iu;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.TintInfo;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,13 +13,17 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.dm.rentalvanou.core.ImgArrayAdapter;
+import android.app.Activity;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
+import com.dm.rentalvanou.core.ImageArrayAdapter;
 import com.dm.rentalvanou.core.Item;
 import com.dm.rentalvanou.core.RentalVan;
 import com.dm.rentalvanou.model.DBManager;
-
-import org.w3c.dom.Text;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,53 +34,63 @@ public class MainActivity extends AppCompatActivity {
         RentalVan rentalVan;
         ListView lvFurgos;
         ListView lvMarcasFurgos;
+        Button btnLogin;
         TextView tvUserName;
-        String user_name = null;
-        String user_email = null;
-        List<Item> items;
+        String user_name = "";
+        String user_email = "";
+        List<Item> itemsView;
+        private ActivityResultLauncher<Intent> activityResultLauncherEdit;
         SQLiteDatabase db;
+        DBManager dbManager;
+        ArrayAdapter<String> adapter;
+        ImageArrayAdapter adapter1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        DBManager dbManager = DBManager.getManager(this.getApplicationContext());
-        db = dbManager.getReadableDatabase();
-        rentalVan = new RentalVan(db);
-
-        Intent intent = getIntent();
-        user_name = intent.getStringExtra("uname");
-        user_email = intent.getStringExtra("uemail");
-
-        if(user_name != null){
-            tvUserName = (TextView) findViewById(R.id.TextViewUser);
-            tvUserName.setText(user_name);
-
-            Button btnLogin = this.findViewById(R.id.buttonMainLogin);
-            btnLogin.setText("LOGOUT");
-            btnLogin.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    user_name = null;
-                    finish();
-                    startActivity(getIntent());
-                }
-            });
-
-            View btnRegistro = findViewById(R.id.buttonMainRegistro);
-            btnRegistro.setVisibility(View.GONE);
-        }
-
         // LOGIN
-        Button btnLogin = this.findViewById(R.id.buttonMainLogin);
+        btnLogin = this.findViewById(R.id.buttonMainLogin);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                activityResultLauncherEdit.launch(intent);
             }
         });
+        ActivityResultContract<Intent, ActivityResult> contract =
+                new ActivityResultContracts.StartActivityForResult();
+        ActivityResultCallback<ActivityResult> callback =
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) { //se comprueba el resultado
+                            Intent intent = result.getData(); //se obtienen los datos de resultado
+                            user_name = intent.getExtras().getString("uname");
+                            user_email = intent.getExtras().getString("uemail");
+                            Toast.makeText(MainActivity.this, "UNAME" + user_name, Toast.LENGTH_SHORT).show();
+                            if(user_name != ""){
+                                tvUserName = (TextView) findViewById(R.id.TextViewUser);
+                                tvUserName.setText(user_name);
 
+                                btnLogin.setText("LOGOUT");
+                                btnLogin.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        user_name = null;
+                                        finish();
+                                        startActivity(getIntent());
+                                    }
+                                });
+
+                                View btnRegistro = findViewById(R.id.buttonMainRegistro);
+                                btnRegistro.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+                };
+        this.activityResultLauncherEdit = this.registerForActivityResult(contract, callback);
 
         // REGISTRO
         Button btnRegistro = this.findViewById(R.id.buttonMainRegistro);
@@ -88,34 +101,43 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void onStart() {
+
+        super.onStart();
+
+        dbManager = DBManager.getManager(this.getApplicationContext());
+        db = dbManager.getReadableDatabase();
+        rentalVan = new RentalVan(db);
 
         // FILTRO CARACTERÍSTICAS
         Spinner spinnerFiltroCarac = this.findViewById(R.id.spinnerMainFiltroCarac);
         ArrayAdapter<String> adapter_filtro_carac = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,RentalVan.FILTRO_CARAC);
         spinnerFiltroCarac.setAdapter(adapter_filtro_carac);
 
+        lvFurgos = this.findViewById(R.id.arrayFurgos);
+        lvMarcasFurgos = this.findViewById(R.id.MainArrayMarcas);
+
         // VISUALIZACIÓN DE FURGONETAS
         lvFurgos = this.findViewById(R.id.arrayFurgos);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, RentalVan.FURGONETAS);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, RentalVan.FURGONETAS);
         lvFurgos.setAdapter(adapter);
 
-        lvMarcasFurgos = this.findViewById(R.id.MainArrayMarcas);
-        ArrayAdapter<String> adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, rentalVan.getMarcas());
-        lvMarcasFurgos.setAdapter(adapter1);
-/*
         // VISUALIZACIÓN DE FURGONETAS
-        items = new ArrayList<>();
+        itemsView = new ArrayList<>();
         int[] vans = rentalVan.getImgVans();
         String[] marcas = rentalVan.getMarcas();
         for(int i = 0; i < vans.length; i++){
             Item aux = new Item(vans[i], marcas[i]);
-            items.add(aux);
+            itemsView.add(aux);
         }
-        lvFurgos = this.findViewById(R.id.arrayFurgos);
-        ImgArrayAdapter adapter = new ImgArrayAdapter(this, R.layout.list_item_layout, items);
-        lvFurgos.setAdapter(adapter);
-*/
-        // SELECCION DE FURGONETA CARACTERÍSTICAS
+
+        lvMarcasFurgos = this.findViewById(R.id.MainArrayMarcas);
+        adapter1 = new ImageArrayAdapter(this, R.layout.list_vans_layout, itemsView);
+        lvMarcasFurgos.setAdapter(adapter1);
+
+        // SELECCION DE FURGONETA
         lvFurgos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -128,19 +150,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // VISUALIZACIÓN DE FURGONETAS FON FILTRO
+        // VISUALIZACIÓN DE FURGONETAS CON FILTRO
         showFurgos(spinnerFiltroCarac);
     }
-    /*
-    private void creaLista(){
-        final ListView lvItems = this.findViewById( R.id.arrayFurgos );
-        this.adapterList = new ItemArrayAdapter( this, this.items );
-        lvItems.setAdapter( this.adapterList );
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        this.dbManager.close();
+        this.db.close();
     }
-    */
+
     //Método donde intento pasar información a otra actividad
     private void pasaInfo(String valor) {
-
         Intent intent = new Intent(this, FurgoviewActivity.class);
         intent.putExtra("clave", valor);
         if(user_name != null){
@@ -150,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
         else{
             Toast.makeText(MainActivity.this, "UNAME: Null", Toast.LENGTH_SHORT).show();
         }
-
         startActivity(intent);
     }
 
@@ -180,46 +201,54 @@ public class MainActivity extends AppCompatActivity {
         lvFurgos = this.findViewById(R.id.arrayFurgos);
         lvMarcasFurgos = this.findViewById(R.id.MainArrayMarcas);
         ArrayAdapter<String> adapter;
-        ArrayAdapter<String> adapter1;
+        ImageArrayAdapter adapter1;
         String[] nfurgos;
-        String[] marca;
+
+        //carga de items
+        int[] vans = rentalVan.getImgVans();
+        String[] marcas = rentalVan.getMarcas();
+        List<Item> itemV = new ArrayList<>();
+        for(int i = 0; i < vans.length; i++){
+            Item sol = new Item(vans[i], marcas[i]);
+            itemV.add(sol);
+        }
         switch (aux){
             case "mayor altura":
                 nfurgos = rentalvan.copiaOrden(RentalVan.FURGONETAS,rentalvan.ordenaMayor(rentalvan.getAlturas()));
-                marca = rentalvan.copiaOrden(rentalvan.getMarcas(), rentalvan.ordenaMayor(rentalvan.getAlturas()));
+                itemV = rentalvan.copiaOrden(itemV, rentalvan.ordenaMayor(rentalvan.getAlturas()));
                 adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, nfurgos);
                 lvFurgos.setAdapter(adapter);
-                adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,marca);
+                adapter1 = new ImageArrayAdapter(this, R.layout.list_vans_layout, itemV);
                 lvMarcasFurgos.setAdapter(adapter1);
                 break;
             case "mayor ancho":
                 nfurgos = rentalvan.copiaOrden(RentalVan.FURGONETAS,rentalvan.ordenaMayor(rentalvan.getAnchos()));
-                marca = rentalvan.copiaOrden(rentalvan.getMarcas(),rentalvan.ordenaMayor(rentalvan.getAnchos()));
+                itemV = rentalvan.copiaOrden(itemV,rentalvan.ordenaMayor(rentalvan.getAnchos()));
                 adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, nfurgos);
                 lvFurgos.setAdapter(adapter);
-                adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,marca);
+                adapter1 = new ImageArrayAdapter(this, R.layout.list_vans_layout, itemV);
                 lvMarcasFurgos.setAdapter(adapter1);
                 break;
             case "mayor largo":
                 nfurgos = rentalvan.copiaOrden(RentalVan.FURGONETAS,rentalvan.ordenaMayor(rentalvan.getLargos()));
-                marca = rentalvan.copiaOrden(rentalvan.getMarcas(),rentalvan.ordenaMayor(rentalvan.getLargos()));
+                itemV = rentalvan.copiaOrden(itemV,rentalvan.ordenaMayor(rentalvan.getLargos()));
                 adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, nfurgos);
                 lvFurgos.setAdapter(adapter);
-                adapter1= new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,marca);
+                adapter1 = new ImageArrayAdapter(this, R.layout.list_vans_layout, itemV);
                 lvMarcasFurgos.setAdapter(adapter1);
                 break;
             case "mayor capacidad":
                 nfurgos = rentalvan.copiaOrden(RentalVan.FURGONETAS,rentalvan.ordenaMayor(rentalvan.getCapacidades()));
-                marca = rentalvan.copiaOrden(rentalvan.getMarcas(),rentalvan.ordenaMayor(rentalvan.getCapacidades()));
+                itemV = rentalvan.copiaOrden(itemV,rentalvan.ordenaMayor(rentalvan.getCapacidades()));
                 adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, nfurgos);
                 lvFurgos.setAdapter(adapter);
-                adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,marca);
+                adapter1 = new ImageArrayAdapter(this, R.layout.list_vans_layout, itemV);
                 lvMarcasFurgos.setAdapter(adapter1);
                 break;
             default:
                 adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, RentalVan.FURGONETAS);
                 lvFurgos.setAdapter(adapter);
-                adapter1 = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,rentalvan.getMarcas());
+                adapter1 = new ImageArrayAdapter(this, R.layout.list_vans_layout, itemV);
                 lvMarcasFurgos.setAdapter(adapter1);
         }
     }

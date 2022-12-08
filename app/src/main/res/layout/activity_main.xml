@@ -118,16 +118,15 @@
             </LinearLayout>
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
                 <ListView
                     android:id="@+id/arrayFurgos"
-                    android:layout_width="208dp"
-                    android:layout_height="343dp"
-                    android:layout_weight="0.25">
+                    android:layout_width="51dp"
+                    android:layout_height="match_parent">
 
                 </ListView>
 

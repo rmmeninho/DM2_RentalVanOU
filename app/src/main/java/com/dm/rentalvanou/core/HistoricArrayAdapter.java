@@ -11,10 +11,10 @@ import com.dm.rentalvanou.iu.R;
 
 import java.util.List;
 
-public class ImgArrayAdapter extends ArrayAdapter<Item> {
+public class HistoricArrayAdapter extends ArrayAdapter<Item> {
     Context context;
 
-    public ImgArrayAdapter(Context context, int resourceId, List<Item> items) {
+    public HistoricArrayAdapter(Context context, int resourceId, List<Item> items) {
         super(context, resourceId, items);
         this.context = context;
     }
@@ -29,12 +29,7 @@ public class ImgArrayAdapter extends ArrayAdapter<Item> {
             view = INFLATER.inflate( R.layout.list_item_layout, null );
         }
 // Rellenar los datos
-        /*
-        final TextView lblImage = view.findViewById( R.id.lblImage );
-        final TextView lblMarca = view.findViewById( R.id.lblMarca );
-        lblImage.setText( ITEM.getImg());
-        lblMarca.setText( ITEM.getMarca());
-*/
+
         final TextView lblMarca = view.findViewById( R.id.textViewLMarca);
         final TextView lblModelo = view.findViewById( R.id.textViewLModelo );
         final TextView lblCombustible = view.findViewById(R.id.textViewLCombustible);

@@ -7,7 +7,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.dm.rentalvanou.iu.R;
 
@@ -17,7 +16,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     //DATOS TABLA FURGONETAS
     public static final String TABLA_VAN = "furgonetas";
-    public static final String VAN_ID = "id";
+    public static final String VAN_ID = "_id";
     public static final String VAN_IMG = "furgoimg";
     public static final String VAN_MARCA = "marca";
     public static final String VAN_MODELO = "modelo";
@@ -29,7 +28,7 @@ public class DBManager extends SQLiteOpenHelper {
 
     //DATOS TABLA USUARIOS
     public static final String TABLA_USER = "usuarios";
-    public static final String USER_ID = "id";
+    public static final String USER_ID = "_id";
     public static final String USER_NOMBRE = "nombre";
     public static final String USER_APELLIDOS = "apellidos";
     public static final String USER_EMAIL = "email";
@@ -37,9 +36,9 @@ public class DBManager extends SQLiteOpenHelper {
 
     //DATOS TABLA ALQUILERES
     public static final String TABLA_RENT = "alquileres";
-    public static final String RENT_ID = "id";
+    public static final String RENT_ID = "_id";
     public static final String RENT_VAN_ID = "id_van";
-    public static final String RENT_VAN_COMBUSTIBLE = "combustible";
+    public static final String RENT_VAN_COMBUSTIBLE = "_combustible";
     public static final String RENT_USER_ID = "id_user";
     public static final String RENT_F_INI = "fecha_inicio";
     public static final String RENT_F_FIN = "fecha_fin";
@@ -128,13 +127,13 @@ public class DBManager extends SQLiteOpenHelper {
 
     public void loadInicial(SQLiteDatabase db) {
 
-        int[] IMAGEN_FURGOS = {R.drawable.jumper, R.drawable.boxer, R.drawable.kangoo, R.drawable.courier, R.drawable.scudo, R.drawable.vivaro};
-        String[] MARCA = {"Citroen", "Peugeot", "Renault", "Ford", "Fiat", "Opel"};
-        String[] MODELO = {"Jumper", "Boxer", "Kangoo", "Courier", "Scudo", "Vivaro"};
-        int[] ALTURA = {2254, 2522, 1864, 1764, 2779, 1971};
-        int[] ANCHO = {2050, 2050, 1829, 1770, 2050, 1956};
-        int[] LARGO = {4963, 5413, 3871, 4157, 6363, 4999};
-        int[] CAPACIDAD = {12, 15, 3, 4, 17, 7};
+        int[] IMAGEN_FURGOS = { R.drawable.jumper, R.drawable.boxer, R.drawable.kangoo, R.drawable.courier, R.drawable.scudo, R.drawable.vivaro};
+        String[] MARCA = { "Citroen", "Peugeot", "Renault", "Ford", "Fiat", "Opel"};
+        String[] MODELO = { "Jumper", "Boxer", "Kangoo", "Courier", "Scudo", "Vivaro"};
+        int[] ALTURA = { 2254, 2522, 1864, 1764, 2779, 1971 };
+        int[] ANCHO = { 2050, 2050, 1829, 1770, 2050, 1956 };
+        int[] LARGO = { 4963, 5413, 3871, 4157, 6363, 4999 };
+        int[] CAPACIDAD = { 12, 15, 3, 4, 17, 7 };
         String[] combustibles = {"DIESEL", "GAS", "ELECTRICO"};
         String[] COMBUSTIBLE = {combustibles[0], combustibles[0], combustibles[0], combustibles[0], combustibles[0], combustibles[0]};
 
@@ -162,14 +161,13 @@ public class DBManager extends SQLiteOpenHelper {
 
     // Gets
 
-    public Cursor getVans(SQLiteDatabase db) {
-        return db.query( TABLA_VAN, null, null, null, null, null, null );
-    }
-
-    public Cursor getRents(SQLiteDatabase db, int id){
+    public Cursor getRents(SQLiteDatabase db, int iduser){
         Cursor toret = null;
         try{
-            toret = db.rawQuery(" SELECT * FROM alquileres, furgonetas WHERE alquileres.id_van = furgonetas.id AND alquileres.id_user = " + id + " ORDER BY alquileres.fecha_inicio DESC", null);
+            //toret = db.rawQuery(" SELECT " + VAN_MARCA+", " + VAN_MODELO + ", alquileres."+ RENT_VAN_COMBUSTIBLE + ", " + RENT_F_INI + ", " + RENT_F_FIN + ", " + RENT_COSTE + " FROM " + TABLA_RENT + ", " + TABLA_VAN + " WHERE " + RENT_VAN_ID + "= furgonetas.id AND " +RENT_USER_ID + "=" +iduser+" ORDER BY alquileres.fecha_inicio asc", null);
+           //toret = db.rawQuery("select furgonetas.marca, furgonetas.modelo, alquileres.combustible, alquileres.fecha_inicio, alquileres.fecha_fin, alquileres.coste from alquileres, furgonetas  where alquileres.id_van = furgonetas.id and alquileres.id_user =" + iduser + " order by alquileres.fecha_inicio desc",null);
+            toret = db.rawQuery(" SELECT * FROM " + TABLA_RENT + ", " + TABLA_VAN + " WHERE " + RENT_VAN_ID + "= furgonetas._id AND " +RENT_USER_ID + "=" +iduser+" ORDER BY alquileres._id desc", null);
+
         }
         catch (SQLException e){
             Log.e("USER NO EXISTE", e.getMessage());
@@ -202,81 +200,107 @@ public class DBManager extends SQLiteOpenHelper {
 
     // ADDS
 
-    public void addVan(String[] valores){
+    public boolean addUser(String[] values){
+        boolean toret = false;
         SQLiteDatabase db = instancia.getWritableDatabase();
-        try {
-            db.beginTransaction();
-            db.execSQL(" INSERT OR IGNORE INTO " + TABLA_VAN
-                    + " ( " + VAN_IMG
-                    + " , " + VAN_MARCA
-                    + " , " + VAN_MODELO
-                    + " , " + VAN_ALTURA
-                    + " , " + VAN_ANCHO
-                    + " , " + VAN_LARGO
-                    + " , " + VAN_CAPACIDAD
-                    + " , " + VAN_COMBUSTIBLE
-                    + " )  VALUES( ?, ?, ?, ?, ?, ?, ?, ?) ", valores);
-            db.setTransactionSuccessful();
+        if(!searchUser(values[2])){
+            ContentValues valores = new ContentValues();
+            valores.put(USER_NOMBRE, values[0]);
+            valores.put(USER_APELLIDOS, values[1]);
+            valores.put(USER_EMAIL, values[2]);
+            valores.put(USER_PASSWD, values[3]);
+            try {
+                db.beginTransaction();
+                db.insert(TABLA_USER, null, valores);
+                db.setTransactionSuccessful();
+                toret = true;
+            } catch (SQLException exc) {
+                Log.e("Error en la inserción", exc.getMessage());
+            } finally {
+                db.endTransaction();
+            }
         }
-        catch (SQLException exc){
-            Log.e("Error en la inserción", exc.getMessage());
-        }
-        finally {
-            db.endTransaction();
-        }
-    }
-    public void addUser(String[] values){
-        SQLiteDatabase db = instancia.getWritableDatabase();
-        ContentValues valores = new ContentValues();
-        valores.put(USER_NOMBRE, values[0]);
-        valores.put(USER_APELLIDOS, values[1]);
-        valores.put(USER_EMAIL, values[2]);
-        valores.put(USER_PASSWD, values[3]);
-        try {
-            db.beginTransaction();
-            db.insert(TABLA_USER, null, valores);
-            db.setTransactionSuccessful();
-        } catch (SQLException exc) {
-            Log.e("Error en la inserción", exc.getMessage());
-        } finally {
-            db.endTransaction();
-        }
+        return toret;
     }
 
-    public void addRents(String[] values){
+    public boolean addRents(String[] values){
+        boolean toret = false;
         SQLiteDatabase db = instancia.getWritableDatabase();
-        ContentValues valores = new ContentValues();
-        valores.put(RENT_VAN_ID, Integer.parseInt(values[0]));
-        valores.put(RENT_VAN_COMBUSTIBLE, values[1]);
-        valores.put(RENT_USER_ID, Integer.parseInt(values[2]));
-        valores.put(RENT_F_INI, values[3]);
-        valores.put(RENT_F_FIN, values[4]);
-        valores.put(RENT_COSTE, values[5]);
-        try {
-            db.beginTransaction();
-            db.insert(TABLA_RENT, null, valores);
-            db.setTransactionSuccessful();
-
-        } catch (SQLException exc) {
-            Log.e("Error en la inserción", exc.getMessage());
-        } finally {
-            db.endTransaction();
+        if(!searchRent(values[0],values[1],values[3])){
+            ContentValues valores = new ContentValues();
+            valores.put(RENT_VAN_ID, Integer.parseInt(values[0]));
+            valores.put(RENT_VAN_COMBUSTIBLE, values[1]);
+            valores.put(RENT_USER_ID, Integer.parseInt(values[2]));
+            valores.put(RENT_F_INI, values[3]);
+            valores.put(RENT_F_FIN, values[4]);
+            valores.put(RENT_COSTE, values[5]);
+            try {
+                db.beginTransaction();
+                db.insert(TABLA_RENT, null, valores);
+                db.setTransactionSuccessful();
+                toret = true;
+            } catch (SQLException exc) {
+                Log.e("Error en la inserción", exc.getMessage());
+            } finally {
+                db.endTransaction();
+            }
         }
+        return toret;
     }
 
     // SEARCH
 
-    public Cursor searchVan(SQLiteDatabase db, int value){
+    public Cursor searchVan(SQLiteDatabase db, int image){
         Cursor toret = null;
         try {
-            toret  = db.rawQuery( " SELECT " + VAN_ID + " FROM " + TABLA_VAN + " WHERE " + VAN_IMG + " = " + value, null);
+            toret  = db.rawQuery( " SELECT " + VAN_ID + " FROM " + TABLA_VAN + " WHERE " + VAN_IMG + " = " + image, null);
+        }
+        catch(SQLException exc) {
+            Log.e( "DBManager.searchFor", exc.getMessage() );
+        }
+
+        return toret;
+    }
+    // SOBRECARGA EL METODO SsearchVan para comprobar que este disponible
+    public boolean searchRent(String idvan, String tipo, String fechaini){
+        SQLiteDatabase db = instancia.getReadableDatabase();
+        boolean result = false;
+        Cursor toret = null;
+        try {
+            db.beginTransaction();
+            //toret = db.rawQuery("SELECT alquileres._id FROM alquileres WHERE alquileres.id_van = ? AND alquileres._combustible = ? AND ? BETWEEN alquileres.fecha_inicio AND alquileres.fecha_fin ", new String[]{idvan,tipo,fechaini});
+            toret  = db.rawQuery( " SELECT " + RENT_ID + " FROM " + TABLA_RENT + " WHERE " + RENT_VAN_ID + " = ? AND " + RENT_VAN_COMBUSTIBLE + " = ? AND ? BETWEEN " + RENT_F_INI + " AND " + RENT_F_FIN , new String[]{idvan,tipo,fechaini});
+            db.setTransactionSuccessful();
+        }
+        catch(SQLException exc) {
+            Log.e( "DBManager.searchFor", exc.getMessage() );
+        }
+        finally{
+            db.endTransaction();
+            if(toret.getCount() == 1){
+                result = true;
+            }
+            else{
+                result = false;
+            }
+            toret.close();
+        }
+        return result;
+    }
+
+    public Cursor fechaDisponible(String idvan, String tipo){
+        SQLiteDatabase db = instancia.getReadableDatabase();
+        Cursor toret = null;
+        try {
+            //toret = db.rawQuery("SELECT alquileres._id FROM alquileres WHERE alquileres.id_van = ? AND alquileres._combustible = ? AND ? BETWEEN alquileres.fecha_inicio AND alquileres.fecha_fin ", new String[]{idvan,tipo,fechaini});
+            toret  = db.rawQuery( " SELECT " + RENT_F_FIN + " FROM " + TABLA_RENT + " WHERE " + RENT_VAN_ID + " = ? AND " + RENT_VAN_COMBUSTIBLE + " = ?  ORDER BY 1 DESC LIMIT 1 ", new String[]{idvan,tipo});
         }
         catch(SQLException exc) {
             Log.e( "DBManager.searchFor", exc.getMessage() );
         }
         return toret;
-    }
 
+    }
     public Cursor searchUser(SQLiteDatabase db, String value){
         Cursor toret = null;
         try {
@@ -288,11 +312,37 @@ public class DBManager extends SQLiteOpenHelper {
         return toret;
     }
 
+    // SOBRECARGA EL METODO SsearchUser para comprobar que existe el usuario
+    public boolean searchUser(String email){
+        SQLiteDatabase db = instancia.getReadableDatabase();
+        boolean result = false;
+        Cursor toret = null;
+        try {
+            db.beginTransaction();
+            toret = db.rawQuery( " SELECT " + USER_ID + " FROM " + TABLA_USER + " WHERE " + USER_EMAIL + " = ?", new String[]{email});
+            db.setTransactionSuccessful();
+        }
+        catch(SQLException exc) {
+            Log.e( "DBManager.searchFor", exc.getMessage() );
+        }
+        finally {
+            db.endTransaction();
+            if(toret.getCount() == 1){
+                result = true;
+            }
+            else{
+                result = false;
+            }
+            toret.close();
+        }
+       return result;
+    }
+
     // DELETE COUNT
 
     public boolean deleteCount( int userid) {
         SQLiteDatabase db = instancia.getWritableDatabase();
-        boolean toret = false;
+        boolean toret;
         try {
             db.beginTransaction();
             db.execSQL("DELETE FROM " + TABLA_RENT + " WHERE " + RENT_USER_ID + "=" + userid);

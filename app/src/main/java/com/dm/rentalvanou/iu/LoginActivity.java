@@ -3,6 +3,7 @@ package com.dm.rentalvanou.iu;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,20 +24,13 @@ public class LoginActivity extends AppCompatActivity{
     EditText etEmail;
     EditText etPassword;
     SQLiteDatabase db;
+    DBManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        // OPEN BD
-        DBManager dbManager = DBManager.getManager(this.getApplicationContext());
-        db = dbManager.getReadableDatabase();
-
-        //  RECUPERACIÓN DE EMAIL SI VIENE DE REGISTRO
-        Intent intent = getIntent();
-        String email = intent.getStringExtra("clave");
 
 
         Button btnLogin = (Button) this.findViewById(R.id.buttonLoginLogin);
@@ -56,7 +50,8 @@ public class LoginActivity extends AppCompatActivity{
                     pasaInfo(user_name,user_email);
                 }
                 else{
-                    Toast.makeText(LoginActivity.this, "El user no existe", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "El user o password no existe", Toast.LENGTH_SHORT).show();
+                    LoginActivity.this.setResult(Activity.RESULT_CANCELED);
                 }
                 //startActivity(new Intent(LoginActivity.this, MainconLoginActivity.class));
             }
@@ -69,6 +64,17 @@ public class LoginActivity extends AppCompatActivity{
                 startActivity(new Intent(LoginActivity.this, MainActivity.class));
             }
         });
+    }
+
+    public void onStart(){
+        super.onStart();
+        // OPEN BD
+        dbManager = DBManager.getManager(this.getApplicationContext());
+        db = dbManager.getReadableDatabase();
+
+        //  RECUPERACIÓN DE EMAIL SI VIENE DE REGISTRO
+        Intent intent = getIntent();
+        String email = intent.getStringExtra("clave");
 
         //Estos editText recogeran la información para logearse
         etEmail = (EditText) this.findViewById(R.id.editTextLoginEmail);
@@ -77,11 +83,19 @@ public class LoginActivity extends AppCompatActivity{
             etEmail.setText(email);
         }
     }
-    private void pasaInfo(String name, String email){
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("uname", name);
-        intent.putExtra("uemail", email);
-        startActivity(intent);
+
+    public void onPause(){
+        super.onPause();
+        dbManager.close();
+        db.close();
+    }
+
+    private void pasaInfo(String user_name, String user_email){
+        Intent intent = new Intent();
+        intent.putExtra("uname", user_name);
+        intent.putExtra("uemail", user_email);
+        LoginActivity.this.setResult(Activity.RESULT_OK, intent);
+        LoginActivity.this.finish();
     }
 
 }

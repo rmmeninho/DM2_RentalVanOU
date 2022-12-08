@@ -23,9 +23,7 @@ public class Item {
         this.coste = coste;
     }
 
-    public int getImg(){
-        return this.img;
-    }
+    public int getImg(){ return this.img; }
 
     public String getMarca() {
         return this.marca;

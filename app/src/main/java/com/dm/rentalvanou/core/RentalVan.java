@@ -18,12 +18,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class RentalVan extends AppCompatActivity {
 
-    public static String[] FILTRO_CARAC = {"todas","Disponibles","mayor altura","mayor ancho","mayor largo","mayor capacidad"};
+    public static String[] FILTRO_CARAC = {"todas","mayor altura","mayor ancho","mayor largo","mayor capacidad"};
     public static final double PRECIO_FIJO = 35.00;
     private String[] combustibles = {"DIESEL", "GAS", "ELECTRICO"};
     private int[] IMAGEN_FURGOS;
@@ -36,17 +37,6 @@ public class RentalVan extends AppCompatActivity {
     private int[] CAPACIDAD;
     private String[] COMBUSTIBLE;
     SQLiteDatabase db;
-    /*
-    public static int[] IMAGEN_FURGOS = {R.drawable.jumper, R.drawable.boxer, R.drawable.kangoo,R.drawable.courier,R.drawable.scudo,R.drawable.vivaro};
-    public static String[] FURGONETAS = {"Furgo 1","Furgo 2","Furgo 3","Furgo 4","Furgo 5","Furgo 6"};
-    public static String[] MARCA = {"Citroen","Peugeot","Renault","Ford","Fiat","Opel"};
-    public static String[] MODELO = {"Jumper","Boxer","Kangoo","Courier","Scudo","Vivaro"};
-    public static int[] ALTURA = {2254,2522,1864,1764,2779,1971};
-    public static int[] ANCHO = {2050,2050,1829,1770,2050,1956};
-    public static int[] LARGO = {4963,5413,3871,4157,6363,4999};
-    public static int[] CAPACIDAD = {12,15,3,4,17,7};
-    public static String[] COMBUSTIBLE = {combustibles[0], combustibles[0],combustibles[0],combustibles[0],combustibles[0],combustibles[0]};
-    */
 
     public RentalVan(SQLiteDatabase db){
         this.db = db;
@@ -89,10 +79,6 @@ public class RentalVan extends AppCompatActivity {
         return MARCA;
     }
 
-    public String[] getModelos(){
-        return MODELO;
-    }
-
     public int[] getAlturas(){
         return ALTURA;
     }
@@ -107,15 +93,6 @@ public class RentalVan extends AppCompatActivity {
 
     public int[] getCapacidades(){
         return CAPACIDAD;
-    }
-
-    public String[] getCombustibles(){
-        return COMBUSTIBLE;
-    }
-
-
-    public String getFurgoneta(int pos){
-        return FURGONETAS[pos];
     }
 
     public int getImgVan(int pos){
@@ -144,10 +121,6 @@ public class RentalVan extends AppCompatActivity {
 
     public int getCapacidad(int pos){
         return CAPACIDAD[pos];
-    }
-
-    public double getPrecio(){
-        return PRECIO_FIJO;
     }
 
     public String getCombustible(int pos){ return COMBUSTIBLE[pos];}
@@ -193,7 +166,7 @@ public class RentalVan extends AppCompatActivity {
     }
 
     public int calcularDiasAlquiler(String fecha_ini, String fecha_fin) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Date f_ini = sdf.parse(fecha_ini);
         Date f_fin = sdf.parse(fecha_fin);
 
@@ -254,6 +227,14 @@ public class RentalVan extends AppCompatActivity {
         String[] toret = new String[desordenado.length];
         for(int i = 0; i < desordenado.length; i++){
             toret[i] = desordenado[ordenado[i]];
+        }
+        return toret;
+    }
+    //sobre carga del metodo copia orden
+    public List<Item> copiaOrden(List<Item> desordenado, int[] ordenado){
+        List<Item> toret = new ArrayList<>();
+        for(int i = 0; i < desordenado.size(); i++){
+            toret.add(desordenado.get(ordenado[i]));
         }
         return toret;
     }

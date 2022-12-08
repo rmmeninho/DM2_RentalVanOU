@@ -39,7 +39,10 @@
             <ListView
                 android:id="@+id/ListHistoric"
                 android:layout_width="match_parent"
-                android:layout_height="490dp" />
+                android:layout_height="match_parent">
+
+            </ListView>
+
         </LinearLayout>
 
         <LinearLayout

@@ -47,13 +47,36 @@ public class FurgoviewActivity extends AppCompatActivity {
     String user_name = null;
     String user_email = null;
     SQLiteDatabase db;
+    DBManager dbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_furgoview);
 
-        DBManager dbManager = DBManager.getManager(this.getApplicationContext());
+
+        //BOTÓN VOLVER
+        btn_Volver = (Button) this.findViewById(R.id.buttonFvVolver);
+        btn_Volver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pasaInfoVoler();
+            }
+        });
+
+        //BOTÓN RENT
+        btnRent = (Button) this.findViewById(R.id.buttonFurgoviewRent);
+        btnRent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pasaInfo();
+            }
+        });
+    }
+
+    public void onStart(){
+        super.onStart();
+        dbManager = DBManager.getManager(this.getApplicationContext());
         db = dbManager.getReadableDatabase();
         rentalVan = new RentalVan(db);
 
@@ -86,24 +109,6 @@ public class FurgoviewActivity extends AppCompatActivity {
 
         imageView = (ImageView) this.findViewById(R.id.imageView2);
 
-        //BOTÓN VOLVER
-        btn_Volver = (Button) this.findViewById(R.id.buttonFvVolver);
-        btn_Volver.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(FurgoviewActivity.this, MainActivity.class));
-            }
-        });
-
-        //BOTÓN RENT
-        btnRent = (Button) this.findViewById(R.id.buttonFurgoviewRent);
-        btnRent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pasaInfo();
-            }
-        });
-
         String marca = rentalVan.getMarca(furgo_select);
         String modelo = rentalVan.getModelo(furgo_select);
         String altura = String.valueOf(rentalVan.getAltura(furgo_select));
@@ -125,9 +130,23 @@ public class FurgoviewActivity extends AppCompatActivity {
 
     }
 
+    public void onPause(){
+        super.onPause();
+        dbManager.close();
+        db.close();
+    }
+
     private void pasaInfo() {
         Intent intent = new Intent(this, FurgoRentActivity.class);
         intent.putExtra("clave", furgo_select);
+        if(user_name != null){
+            intent.putExtra("uname", user_name);
+            intent.putExtra("uemail", user_email);
+        }
+        startActivity(intent);
+    }
+    private void pasaInfoVoler() {
+        Intent intent = new Intent(this, MainActivity.class);
         if(user_name != null){
             intent.putExtra("uname", user_name);
             intent.putExtra("uemail", user_email);
